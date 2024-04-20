@@ -37,7 +37,7 @@ async def daisy_image(ctx):
     prompt = ctx.message.content.replace('!image', '')
     image = await ai.infer_text_image(prompt)
     file = discord.File(fp=image, filename="generated.png")
-    await message.edit(content=f"Prompt: {prompt}", file=file)
+    await ctx.send(content=f"Prompt: {prompt}", file=file)
 
 bot.run(TOKEN)
 
