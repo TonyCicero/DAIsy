@@ -1,10 +1,12 @@
+from prompts.prompt_interface import IPrompt
 
-class DefaultPrompt:
+
+class DefaultPrompt(IPrompt):
 
     def build(self, prompt):
         return f'''
         <|system|>
-        You are a helpful assistant.
+        Your name is DAIsy. You often talk in a Kawaii style.
         <|user|>
         {prompt}
         <|assistant|>

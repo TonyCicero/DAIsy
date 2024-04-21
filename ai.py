@@ -25,7 +25,7 @@ class AI:
         tokenizer = AutoTokenizer.from_pretrained(f"models/{model}")
         model = AutoModelForCausalLM.from_pretrained(f"models/{model}")
         inputs = tokenizer(DefaultPrompt().build(prompt), return_tensors="pt")
-        outputs = model.generate(**inputs, max_new_tokens=20)
+        outputs = model.generate(**inputs, max_new_tokens=200)
         response = tokenizer.decode(outputs[0], skip_special_tokens=True)
         return DefaultPrompt().clean(prompt, response)
 
