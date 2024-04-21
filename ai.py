@@ -1,7 +1,7 @@
 import os
 from io import BytesIO
 from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler, ShapEPipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 from typing import Callable, Tuple, Any, Dict, Coroutine
 import asyncio
@@ -20,12 +20,14 @@ class AI:
 
         return wrapper
 
+    @to_thread
     def infer_text(self, prompt, model="TinyLlama-1.1B-Chat-v1.0"):
         tokenizer = AutoTokenizer.from_pretrained(f"models/{model}")
         model = AutoModelForCausalLM.from_pretrained(f"models/{model}")
         inputs = tokenizer(DefaultPrompt().build(prompt), return_tensors="pt")
         outputs = model.generate(**inputs, max_new_tokens=20)
-        return tokenizer.decode(outputs[0], skip_special_tokens=True)
+        response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        return DefaultPrompt().clean(prompt, response)
 
     @to_thread
     def infer_text_image(self, prompt, model="stable-diffusion-xl-base-1.0"):

@@ -5,5 +5,7 @@ setuptools
 invisible-watermark
 accelerate
 
+discord.py
+
 torch~=2.1.2+cu118
 torchvision~=0.16.2+cu118

@@ -11,6 +11,7 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
 intents = discord.Intents.default()
+intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
@@ -26,7 +27,7 @@ async def on_ready():
 async def daisy_text(ctx):
     ai = AI()
     prompt = ctx.message.content.replace('!llm', '')
-    response = ai.infer_text(prompt)
+    response = await ai.infer_text(prompt)
     await ctx.send(response)
 
 
