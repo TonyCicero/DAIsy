@@ -25,7 +25,9 @@ Recommended Base Models
 - Models should be cloned into a '/models' directory in the root of this repository
 
 Chat: https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0
+
 Image Generation: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
+
 Image Refinement: https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
 **GPU Support**
