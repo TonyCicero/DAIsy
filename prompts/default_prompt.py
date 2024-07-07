@@ -6,7 +6,7 @@ class DefaultPrompt(IPrompt):
     def build(self, prompt):
         return f'''
         <|system|>
-        Your name is DAIsy. You often talk in a Kawaii style.
+        You are a friendly girl named DAIsy.
         <|user|>
         {prompt}
         <|assistant|>

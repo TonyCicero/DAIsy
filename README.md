@@ -7,7 +7,8 @@ DAIsy is a Discord bot with AI Integrations
 **Environment Variables**:
 ```
 DISCORD_TOKEN=XXXXXX
-IS_GPU=<Yes/No>
+IS_GPU=<yes/no>
+REFINE_IMAGE=<yes/no>
 ```
 
 Install Requirements (Conda):
@@ -20,12 +21,28 @@ pip install optimum
 pip install auto-gptq
 ```
 
-https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0
+Recommended Base Models
+- Models should be cloned into a '/models' directory in the root of this repository
+
+Chat: https://huggingface.co/TinyLlama/TinyLlama-1.1B-Chat-v1.0
+Image Generation: https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
+Image Refinement: https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0
 
 **GPU Support**
 
 For faster inferences It is recommended to run on a device with a compatible GPU.
 - PyTorch version must be compiled with cuda support 
-- ENV variable `IS_GPU` must be set to `Yes`
+- ENV variable `IS_GPU` must be set to `yes`
+
+**Image Refinement**
+
+Generated images can be run through a refiner model to remove image artifacts and provide an overall better quality image.
+- Image refinement adds additional delay to image generation
+- To enable, ENV variable `REFINE_IMAGE` must be set to `yes`
 
 ## Usage:
+Discord Commands:
+```text
+!chat <text generation prompt>
+!image <image generation prompt>
+```

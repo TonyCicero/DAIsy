@@ -1,6 +1,10 @@
 import os
+from distutils.util import strtobool
 from io import BytesIO
-from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler, ShapEPipeline
+
+from PIL import Image
+from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler, ShapEPipeline, StableDiffusionXLImg2ImgPipeline, \
+    EulerAncestralDiscreteScheduler
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 from typing import Callable, Tuple, Any, Dict, Coroutine
@@ -30,18 +34,29 @@ class AI:
         return DefaultPrompt().clean(prompt, response)
 
     @to_thread
-    def infer_text_image(self, prompt, model="stable-diffusion-xl-base-1.0"):
+    def infer_text_image(self, prompt, model="stable-diffusion-xl-base-1.0", refine=True):
 
-        if os.getenv('IS_GPU', 'No') == 'Yes':
-            pipe = DiffusionPipeline.from_pretrained(f"models/{model}", torch_dtype=torch.float16,
-                                                     use_safetensors=True, variant="fp16")
+        pipe = DiffusionPipeline.from_pretrained(f"models/{model}", torch_dtype=torch.float16,
+                                                 use_safetensors=True, variant="fp16")
+        if strtobool(os.getenv('IS_GPU', 'no')):
             pipe.to("cuda")
-            result = pipe(prompt=prompt)
-        else:
-            pipe = DiffusionPipeline.from_pretrained(f"models/{model}", torch_dtype=torch.float32,
-                                                     use_safetensors=True, variant="fp16")
-            result = pipe(prompt=prompt)
 
+        result = pipe(prompt=prompt)
+        image = BytesIO()
+        img = result.images[0]
+        img.save(image, format="PNG")
+        image.seek(0)
+        if refine:
+            image = self.image_refiner(prompt, image)
+        return image
+
+    def image_refiner(self, prompt, image, model='stable-diffusion-xl-refiner-1.0'):
+        init_image = Image.open(image)
+        pipe = StableDiffusionXLImg2ImgPipeline.from_pretrained(f"models/{model}", torch_dtype=torch.float16, variant="fp16", use_safetensors=True, safety_checker=None)
+        if strtobool(os.getenv('IS_GPU', 'no')):
+            pipe.to("cuda")
+        pipe.scheduler = EulerAncestralDiscreteScheduler.from_config(pipe.scheduler.config)
+        result = pipe(prompt=prompt, image=init_image, num_inference_steps=10, image_guidance_scale=1)
         image = BytesIO()
         img = result.images[0]
         img.save(image, format="PNG")

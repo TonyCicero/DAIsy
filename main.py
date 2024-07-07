@@ -1,5 +1,6 @@
 
 import os
+from distutils.util import strtobool
 
 import discord
 from discord.ext import commands
@@ -9,6 +10,7 @@ from ai import AI
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+REFINE_IMAGE = strtobool(os.getenv('REFINE_IMAGE', 'yes'))
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -23,10 +25,10 @@ async def on_ready():
         print(f"Guild Name: {guild.name}")
 
 
-@bot.command(name="llm")
+@bot.command(name="chat")
 async def daisy_text(ctx):
     ai = AI()
-    prompt = ctx.message.content.replace('!llm', '')
+    prompt = ctx.message.content.replace('!chat', '')
     response = await ai.infer_text(prompt)
     await ctx.send(response)
 
